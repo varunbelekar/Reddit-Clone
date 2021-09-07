@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active : default
+  datasource:
+    password: pwd703532
+    url: jdbc:postgresql://localhost:5432/reddit
+    username: postgres
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  mail:
+    host: smtp.mailtrap.io
+    port: 2525
+    username: e4df9048c25b25
+    password: 457732b135cce3
+    protocol: smtp

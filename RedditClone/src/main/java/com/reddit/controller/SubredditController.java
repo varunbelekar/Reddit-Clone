@@ -29,4 +29,10 @@ public class SubredditController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(subredditService.getAllSubreddits());
     }
+
+    @DeleteMapping("/{subredditId}")
+    public ResponseEntity<Long> deleteSubredditById(@PathVariable Long subredditId){
+        subredditService.deleteSubredditById(subredditId);
+        return new ResponseEntity<>(subredditId, HttpStatus.OK);
+    }
 }

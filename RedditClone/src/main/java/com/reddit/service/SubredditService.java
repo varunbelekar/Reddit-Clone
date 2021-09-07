@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,7 @@ public class SubredditService {
         SubReddit subReddit = new SubReddit();
         subReddit.setName(dto.getName());
         subReddit.setDescription(dto.getDescription());
+        subReddit.setCreatedDate(Instant.now());
         return subReddit;
     }
 
@@ -45,5 +47,9 @@ public class SubredditService {
         dto.setNumberOfPosts(subReddit.getPosts().size());
         dto.setName(subReddit.getName());
         return dto;
+    }
+
+    public void deleteSubredditById(Long subredditId) {
+         subredditRepository.deleteById(subredditId);
     }
 }

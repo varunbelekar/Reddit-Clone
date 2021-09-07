@@ -1,6 +1,7 @@
 package com.reddit.service;
 
 import com.reddit.dto.PostRequest;
+import com.reddit.dto.PostResponse;
 import com.reddit.exception.SpringRedditException;
 import com.reddit.model.Post;
 import com.reddit.model.SubReddit;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -34,20 +36,38 @@ public class PostService {
         post.setPostName(postRequest.getPostName());
         post.setDescription(postRequest.getDescription());
         post.setCreatedDate(Instant.now());
+        post.setUrl(postRequest.getUrl());
         post.setSubReddit(subReddit);
         post.setUser(user);
         return post;
     }
 
-    public List<Post> getPostUserName(String userName) {
+   /* public List<Post> getPostUserName(String userName) {
         return postRepository.findByUserUserName(userName);
     }
 
-    public Post getPostBySubredditId(String subredditId) {
-        return postRepository.findBySubRedditSubredditId(subredditId);
+    public Post getPostBySubredditName(String subredditName) {
+        return postRepository.findBySubRedditSubredditId(subredditName);
+    }*/
+
+    public List<PostResponse> findAllPosts() {
+        return postRepository.findAll().stream()
+                .map(this::mapPostToPostResponse)
+                .collect(Collectors.toList());
     }
 
-    public List<Post> findAllPosts() {
-        return postRepository.findAll();
+    public PostResponse mapPostToPostResponse(Post post){
+        PostResponse postResponse = new PostResponse();
+        postResponse.setId(post.getPostId());
+        postResponse.setPostName(post.getPostName());
+        postResponse.setDescription(post.getDescription());
+        postResponse.setUserName(post.getUser().getUserName());
+        postResponse.setSubredditName(post.getSubReddit().getName());
+        postResponse.setUrl(post.getUrl());
+        return postResponse;
+    }
+
+    public void deleteAllPosts() {
+        postRepository.deleteAll();
     }
 }

@@ -65,7 +65,7 @@ public class PostService {
         postResponse.setSubredditName(post.getSubReddit().getName());
         postResponse.setUrl(post.getUrl());
         postResponse.setVoteCount(post.getVoteCount());
-        //postResponse.setCommentCount(post.getCommentCount());
+        postResponse.setCommentCount(post.getCommentCount());
         return postResponse;
     }
 

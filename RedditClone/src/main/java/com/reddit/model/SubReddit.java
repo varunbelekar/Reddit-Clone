@@ -26,7 +26,7 @@ public class SubReddit {
     @NotBlank(message = "Description is required")
     private String description;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "subReddit")
     private List<Post> posts;
 
     private Instant createdDate;

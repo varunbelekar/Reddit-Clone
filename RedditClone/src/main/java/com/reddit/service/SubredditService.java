@@ -34,6 +34,7 @@ public class SubredditService {
         return subReddit;
     }
 
+    @Transactional
     public List<SubRedditDto> getAllSubreddits(){
         return subredditRepository.findAll()
                 .stream().map(this::toSubRedditDto)

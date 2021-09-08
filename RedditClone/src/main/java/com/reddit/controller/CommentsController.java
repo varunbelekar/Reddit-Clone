@@ -34,4 +34,11 @@ public class CommentsController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(commentService.getAllCommentsByUserName(userName));
     }
+
+    @DeleteMapping(value = "/{commentId}")
+    public ResponseEntity<String> deleteCommentById(@PathVariable Long commentId){
+        commentService.deleteComment(commentId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Successfully deleted comment");
+    }
 }

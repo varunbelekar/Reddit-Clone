@@ -41,4 +41,6 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subreddit_id", referencedColumnName = "subredditId")
     private SubReddit subReddit;
+
+    private int commentCount;
 }

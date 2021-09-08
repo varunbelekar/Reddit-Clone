@@ -12,6 +12,7 @@ import com.reddit.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,9 +25,12 @@ public class CommentService {
     private final AuthService authService;
     private final CommentRepository commentRepository;
 
+    @Transactional
     public Long saveComment(CommentDto commentDto){
         Post post = postRepository.findById(commentDto.getPostId())
                 .orElseThrow(() -> new PostNotFoundException("No post found : " + commentDto.getPostId().toString()));
+        post.setCommentCount(post.getCommentCount() + 1);
+        postRepository.save(post);
         User user = authService.getCurretUser();
         Comment comment = mapCommentDtoToComment(commentDto, post, user);
         return commentRepository.save(comment).getCommentId();
@@ -66,5 +70,14 @@ public class CommentService {
                 .stream()
                 .map(this::mapCommentToCommentDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new SpringRedditException("No comment found : " + commentId));
+        Post post = postRepository.findById(comment.getPost().getPostId()).orElseThrow(() -> new SpringRedditException("No post found"));
+        post.setCommentCount(post.getCommentCount() - 1);
+        postRepository.save(post);
+        commentRepository.deleteById(commentId);
     }
 }

@@ -52,11 +52,11 @@ public class PostService {
 
     public List<PostResponse> findAllPosts() {
         return postRepository.findAll().stream()
-                .map(this::mapPostToPostResponse)
+                .map(this::toPostResponse)
                 .collect(Collectors.toList());
     }
 
-    public PostResponse mapPostToPostResponse(Post post){
+    public PostResponse toPostResponse(Post post){
         PostResponse postResponse = new PostResponse();
         postResponse.setId(post.getPostId());
         postResponse.setPostName(post.getPostName());
@@ -64,6 +64,8 @@ public class PostService {
         postResponse.setUserName(post.getUser().getUserName());
         postResponse.setSubredditName(post.getSubReddit().getName());
         postResponse.setUrl(post.getUrl());
+        postResponse.setVoteCount(post.getVoteCount());
+        //postResponse.setCommentCount(post.getCommentCount());
         return postResponse;
     }
 

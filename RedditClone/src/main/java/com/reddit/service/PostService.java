@@ -39,6 +39,7 @@ public class PostService {
         post.setUrl(postRequest.getUrl());
         post.setSubReddit(subReddit);
         post.setUser(user);
+        post.setVoteCount(0);
         return post;
     }
 

@@ -33,9 +33,9 @@ public class VoteService {
         }
 
         if(voteDto.getVoteType().equals(VoteType.UPVOTE)  ){
-            post.setVoteCount((post.getVoteCount() == null) ? 1 :  post.getVoteCount() + 1);
+            post.setVoteCount(post.getVoteCount() + 1);
         }else{
-            post.setVoteCount((post.getVoteCount() == null) ? -1 :post.getVoteCount() - 1);
+            post.setVoteCount(post.getVoteCount() - 1);
         }
         Vote vote = toVote(voteDto, post, currentUser);
         voteRepository.save(vote);

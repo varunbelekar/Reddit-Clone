@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SubredditService {
     private final SubredditRepository subredditRepository;
+    private final AuthService authService;
 
     @Transactional
     public SubRedditDto save(SubRedditDto subRedditDto){
@@ -31,6 +32,7 @@ public class SubredditService {
         subReddit.setName(dto.getName());
         subReddit.setDescription(dto.getDescription());
         subReddit.setCreatedDate(Instant.now());
+        subReddit.setUser(authService.getCurrentUser());
         return subReddit;
     }
 

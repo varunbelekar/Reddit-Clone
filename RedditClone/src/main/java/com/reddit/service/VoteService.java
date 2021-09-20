@@ -12,7 +12,6 @@ import com.reddit.repository.VoteRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
@@ -26,7 +25,7 @@ public class VoteService {
     @Transactional
     public void vote(VoteDto voteDto) {
         Post post = postRepository.findById(voteDto.getPostId()).orElseThrow(() -> new PostNotFoundException("Post not found exception : " + voteDto.getPostId()));
-        User currentUser = authService.getCurretUser();
+        User currentUser = authService.getCurrentUser();
         Optional<Vote> voteByUserAndPost = voteRepository.findTopByPostAndUserOrderByVoteIdDesc(post, currentUser);
         if (voteByUserAndPost.isPresent()
         && voteByUserAndPost.get().getVoteType().equals(voteDto.getVoteType())){

@@ -32,5 +32,6 @@ public class SubReddit {
     private Instant createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "userId")
     private User user;
 }

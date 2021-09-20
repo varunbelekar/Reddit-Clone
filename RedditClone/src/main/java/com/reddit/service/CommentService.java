@@ -31,7 +31,7 @@ public class CommentService {
                 .orElseThrow(() -> new PostNotFoundException("No post found : " + commentDto.getPostId().toString()));
         post.setCommentCount(post.getCommentCount() + 1);
         postRepository.save(post);
-        User user = authService.getCurretUser();
+        User user = authService.getCurrentUser();
         Comment comment = mapCommentDtoToComment(commentDto, post, user);
         return commentRepository.save(comment).getCommentId();
     }

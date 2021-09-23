@@ -39,6 +39,13 @@ public class PostController {
         return postService.getPostUserName(userName);
     }*/
 
+    @GetMapping("/{postId}")
+    public  ResponseEntity<PostResponse> getPostById(@PathVariable Long postId){
+        PostResponse postResponse = postService.findByPostId(postId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(postResponse);
+    }
+
     @DeleteMapping
     public ResponseEntity<String> deleteAllPosts(){
          postService.deleteAllPosts();

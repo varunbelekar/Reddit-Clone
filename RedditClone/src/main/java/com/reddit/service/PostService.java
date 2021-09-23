@@ -2,6 +2,7 @@ package com.reddit.service;
 
 import com.reddit.dto.PostRequest;
 import com.reddit.dto.PostResponse;
+import com.reddit.exception.PostNotFoundException;
 import com.reddit.exception.SpringRedditException;
 import com.reddit.model.Post;
 import com.reddit.model.SubReddit;
@@ -9,6 +10,7 @@ import com.reddit.model.User;
 import com.reddit.repository.PostRepository;
 import com.reddit.repository.SubredditRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -72,5 +74,10 @@ public class PostService {
 
     public void deleteAllPosts() {
         postRepository.deleteAll();
+    }
+
+    public PostResponse findByPostId(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("No post found with PostId: " + postId));
+        return toPostResponse(post);
     }
 }

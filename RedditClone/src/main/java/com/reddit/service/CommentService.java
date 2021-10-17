@@ -3,6 +3,7 @@ package com.reddit.service;
 import com.reddit.dto.CommentDto;
 import com.reddit.exception.PostNotFoundException;
 import com.reddit.exception.SpringRedditException;
+import com.reddit.mapper.CommentMapper;
 import com.reddit.model.Comment;
 import com.reddit.model.Post;
 import com.reddit.model.User;
@@ -10,6 +11,7 @@ import com.reddit.repository.CommentRepository;
 import com.reddit.repository.PostRepository;
 import com.reddit.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -32,43 +34,25 @@ public class CommentService {
         post.setCommentCount(post.getCommentCount() + 1);
         postRepository.save(post);
         User user = authService.getCurrentUser();
-        Comment comment = mapCommentDtoToComment(commentDto, post, user);
+        Comment comment = Mappers.getMapper(CommentMapper.class).commentDtoToComment(commentDto, post, user, Instant.now());
         return commentRepository.save(comment).getCommentId();
-    }
-
-    private Comment mapCommentDtoToComment(CommentDto commentDto, Post post, User user){
-        Comment comment = new Comment();
-        comment.setCreatedDate(Instant.now());
-        comment.setPost(post);
-        comment.setUser(user);
-        comment.setText(commentDto.getText());
-        return comment;
     }
 
     public List<CommentDto> getAllCommentsForPost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("No post found for id: " + postId));
         return commentRepository.findByPost(post)
                 .stream()
-                .map(this::mapCommentToCommentDto)
+                .map(comment -> Mappers.getMapper(CommentMapper.class).mapCommentToCommentDto(comment, comment.getUser().getUserName(), comment.getPost().getPostId()))
                 .collect(Collectors.toList());
 
     }
 
-    private CommentDto mapCommentToCommentDto(Comment comment){
-        CommentDto commentDto = new CommentDto();
-        commentDto.setPostId(comment.getPost().getPostId());
-        commentDto.setText(comment.getText());
-        commentDto.setCreatedDate(comment.getCreatedDate());
-        commentDto.setUserName(comment.getUser().getUserName());
-        commentDto.setId(comment.getCommentId());
-        return commentDto;
-    }
 
     public List<CommentDto> getAllCommentsByUserName(String userName) {
         User user = userRepository.findByUserName(userName).orElseThrow(() -> new SpringRedditException("User not found : " + userName));
         return commentRepository.findByUser(user)
                 .stream()
-                .map(this::mapCommentToCommentDto)
+                .map(comment -> Mappers.getMapper(CommentMapper.class).mapCommentToCommentDto(comment, comment.getUser().getUserName(), comment.getPost().getPostId()))
                 .collect(Collectors.toList());
     }
 

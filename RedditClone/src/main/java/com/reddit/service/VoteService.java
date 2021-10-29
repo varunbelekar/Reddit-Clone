@@ -3,6 +3,7 @@ package com.reddit.service;
 import com.reddit.dto.VoteDto;
 import com.reddit.exception.PostNotFoundException;
 import com.reddit.exception.SpringRedditException;
+import com.reddit.mapper.VoteMapper;
 import com.reddit.model.Post;
 import com.reddit.model.User;
 import com.reddit.model.Vote;
@@ -10,6 +11,8 @@ import com.reddit.model.VoteType;
 import com.reddit.repository.PostRepository;
 import com.reddit.repository.VoteRepository;
 import lombok.AllArgsConstructor;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -37,18 +40,18 @@ public class VoteService {
         }else{
             post.setVoteCount(post.getVoteCount() - 1);
         }
-        Vote vote = toVote(voteDto, post, currentUser);
+        Vote vote = Mappers.getMapper(VoteMapper.class).mapVoteDtoToVote(voteDto, post, currentUser);
         voteRepository.save(vote);
         postRepository.save(post);
     }
 
-    public Vote toVote(VoteDto voteDto, Post post, User user){
+    /*public Vote toVote(VoteDto voteDto, Post post, User user){
         return Vote.builder()
                 .post(post)
                 .user(user)
                 .voteType(voteDto.getVoteType())
                 .build();
-    }
+    }*/
 
     public void deleteAllVotes() {
         voteRepository.deleteAll();

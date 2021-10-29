@@ -4,12 +4,14 @@ import com.reddit.dto.PostRequest;
 import com.reddit.dto.PostResponse;
 import com.reddit.exception.PostNotFoundException;
 import com.reddit.exception.SpringRedditException;
+import com.reddit.mapper.PostMapper;
 import com.reddit.model.Post;
 import com.reddit.model.SubReddit;
 import com.reddit.model.User;
 import com.reddit.repository.PostRepository;
 import com.reddit.repository.SubredditRepository;
 import lombok.AllArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +31,11 @@ public class PostService {
     public Post save(PostRequest postRequest) {
         SubReddit subReddit = subredditRepository.findByName(postRequest.getSubredditName()).orElseThrow(() -> new SpringRedditException("No subreddit found : " + postRequest.getSubredditName()));
         User currentUser = authService.getCurrentUser();
-        Post post = mapPostRequestToPost(postRequest, subReddit, currentUser);
+        Post post = Mappers.getMapper(PostMapper.class).mapPostRequestToPost(postRequest, subReddit, currentUser, Instant.now(), 0);
         return postRepository.save(post);
     }
 
-    public Post mapPostRequestToPost(PostRequest postRequest, SubReddit subReddit, User user){
+    /*public Post mapPostRequestToPost(PostRequest postRequest, SubReddit subReddit, User user){
         Post post = new Post();
         post.setPostName(postRequest.getPostName());
         post.setDescription(postRequest.getDescription());
@@ -43,7 +45,7 @@ public class PostService {
         post.setUser(user);
         post.setVoteCount(0);
         return post;
-    }
+    }*/
 
    /* public List<Post> getPostUserName(String userName) {
         return postRepository.findByUserUserName(userName);
@@ -55,11 +57,11 @@ public class PostService {
 
     public List<PostResponse> findAllPosts() {
         return postRepository.findAll().stream()
-                .map(this::toPostResponse)
+                .map(post -> Mappers.getMapper(PostMapper.class).mapPostToPostResponse(post, post.getUser().getUserName(), post.getSubReddit().getName()))
                 .collect(Collectors.toList());
     }
 
-    public PostResponse toPostResponse(Post post){
+    /*public PostResponse toPostResponse(Post post){
         PostResponse postResponse = new PostResponse();
         postResponse.setId(post.getPostId());
         postResponse.setPostName(post.getPostName());
@@ -70,7 +72,7 @@ public class PostService {
         postResponse.setVoteCount(post.getVoteCount());
         postResponse.setCommentCount(post.getCommentCount());
         return postResponse;
-    }
+    }*/
 
     public void deleteAllPosts() {
         postRepository.deleteAll();
@@ -78,6 +80,6 @@ public class PostService {
 
     public PostResponse findByPostId(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("No post found with PostId: " + postId));
-        return toPostResponse(post);
+        return Mappers.getMapper(PostMapper.class).mapPostToPostResponse(post, post.getUser().getUserName(), post.getSubReddit().getName());
     }
 }

@@ -29,6 +29,12 @@ public class PostController {
                 .body(postService.findAllPosts());
     }
 
+    @GetMapping("/paginated")
+    public ResponseEntity<List<PostResponse>> getAllPostsPaginated(@RequestParam int pageNumber, @RequestParam int pageSize){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(postService.findAllPostsPaginated(pageNumber, pageSize));
+    }
+
    /* @GetMapping("/subreddit/{subredditName}")
     public Post getPostBySubredditId(@PathVariable String subredditName){
         return postService.getPostBySubredditName(subredditName);

@@ -12,6 +12,10 @@ import com.reddit.repository.PostRepository;
 import com.reddit.repository.SubredditRepository;
 import lombok.AllArgsConstructor;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +61,14 @@ public class PostService {
 
     public List<PostResponse> findAllPosts() {
         return postRepository.findAll().stream()
+                .map(post -> Mappers.getMapper(PostMapper.class).mapPostToPostResponse(post, post.getUser().getUserName(), post.getSubReddit().getName()))
+                .collect(Collectors.toList());
+    }
+
+    public List<PostResponse> findAllPostsPaginated(final int pageNumber, final int pageSize){
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("postId"));
+        Page<Post> postPage =  postRepository.findAll(pageable);
+        return postPage.get()
                 .map(post -> Mappers.getMapper(PostMapper.class).mapPostToPostResponse(post, post.getUser().getUserName(), post.getSubReddit().getName()))
                 .collect(Collectors.toList());
     }
